@@ -9,7 +9,7 @@ The included tools are:
 - [ ] Produce a JSON encoded error response
 - [x] Upload a file to a specified directory
 - [ ] Download a static file
-- [x] Get a random string of length n
+- [x] Get a random string of length n primarily for generating file names
 - [ ] Post JSON to a remote service
 - [ ] Create a directory, including all parent directories, if it does not already exist
 - [ ] Create a URL safe slug from a string
