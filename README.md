@@ -2,7 +2,7 @@
 
 A simple example of how to create a reusable Go module with commonly used tools.
 
-The included tools are:
+The included tools and testing so far:
 
 - [ ] Read JSON
 - [ ] Write JSON
@@ -12,7 +12,7 @@ The included tools are:
 - [x] Get a random string of length n primarily for generating file names
 - [ ] Post JSON to a remote service
 - [x] Create a directory, including all parent directories, if it does not already exist
-- [ ] Create a URL safe slug from a string
+- [x] Create a URL safe slug from a string
 
 ## Installation
 
