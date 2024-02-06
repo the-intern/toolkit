@@ -44,13 +44,13 @@ type UploadedFile struct {
 }
 
 // UploadOneFile is just a convenience method that calls UploadFiles, but expects and takes only one file
-func (t *Tools) UploadOneFile(req *http.Request, uploadDir string, rename ...bool) (*UploadedFile, error) {
+func (tool *Tools) UploadOneFile(req *http.Request, uploadDir string, rename ...bool) (*UploadedFile, error) {
 	renameFile := true
 	if len(rename) > 0 {
 		renameFile = rename[0]
 	}
 
-	files, err := t.UploadFiles(req, uploadDir, renameFile)
+	files, err := tool.UploadFiles(req, uploadDir, renameFile)
 	if err != nil {
 		return nil, errors.New(err.Error())
 	}
@@ -78,7 +78,15 @@ func (tool *Tools) UploadFiles(req *http.Request, uploadDir string, rename ...bo
 
 	}
 
-	err := req.ParseMultipartForm(int64(tool.MaxFileSize))
+	// create directory
+	err := tool.CreateDirIfNotExist(uploadDir)
+	if err != nil {
+		return nil, err
+	}
+
+	/* func (*http.Request).ParseMultipartForm(maxMemory int64) error
+	ParseMultipartForm parses a request body as multipart/form-data. The whole request body is parsed and up to a total of maxMemory bytes of its file parts are stored in memory, with the remainder stored on disk in temporary files.*/
+	err = req.ParseMultipartForm(int64(tool.MaxFileSize))
 	if err != nil {
 		return nil, errors.New("the uploaded file is too large")
 	}
@@ -174,16 +182,17 @@ func (tool *Tools) UploadFiles(req *http.Request, uploadDir string, rename ...bo
 
 }
 
-/********************************************
-* Notes
-func rand.Prime(rand io.Reader, bits int) (*big.Int, error)
-Prime returns
-	- a number of the given bit length that is prime with high probability.
-	-  error for any error returned by rand.Read or if bits < 2.
+// CreateDirIfNotExist creates a directory and necessary parents if the dir does not yet exist
+func (tool *Tools) CreateDirIfNotExist(path string) error {
+	const mode = 0755
 
-func (*big.Int).Uint64() uint64
-Uint64 returns the uint64 representation of x. If x cannot be represented in a uint64, the result is undefined.
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		err := os.MkdirAll(path, mode)
 
-uint64 is the set of all unsigned 64-bit integers. Range: 0 through 18446744073709551615.
-*/
-/*********************************************/
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
